@@ -9,14 +9,13 @@
 
 void transfer(int sock){
 
-      int *n,i,e=0,c=0,k=0;
-      n=&i;
-     while(read(sock,n,sizeof(i))!=0){
+      int i,e=0;
+     while(read(sock,&i,sizeof(i))!=0){
      if(e==i){
      printf("Frame %d recived\t",e);
      e++;
      i++;
-     write(sock,n,sizeof(i));
+     write(sock,&i,sizeof(i));
      printf("Ack %d\n",i);
      }
       }
@@ -35,16 +34,12 @@ int main(int argc, char const* argv[])
 
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
-
-	// Convert IPv4 and IPv6 addresses from text to binary
-	// form
 	if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)
 		<= 0) {
 		printf(
 			"\nInvalid address/ Address not supported \n");
 		return -1;
 	}
-
 	if ((client_fd
 		= connect(sock, (struct sockaddr*)&serv_addr,
 				sizeof(serv_addr)))
@@ -52,10 +47,7 @@ int main(int argc, char const* argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
-
-	  
         transfer(sock);
-	// closing the connected socket
 	close(client_fd);
 	return 0;
 }
