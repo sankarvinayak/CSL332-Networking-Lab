@@ -9,31 +9,25 @@
 #define PORT 8080
 #define window_size 5
 void transfer(int sock){
-struct timeval tv;
-tv.tv_sec = 1;
-tv.tv_usec = 0;
-setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-srand(time(NULL));
-int *n,head=0,tail=0,c=0,k=0,count,red;
-      red=head;
-      n=&red;
+	struct timeval tv;
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+	srand(time(NULL));
+	int head=0,tail=0,count,red,;
       printf("Enter number of frames:");
       scanf("%d",&count);
-      for(int i=0;i<count;i++){
+      for(tail=0;tail<count;tail++){
       red=-1;
       if((tail-head)>window_size||tail==count-1)
       { printf("Timeout resend from %d\n",head);
-      tail=head;i=head;
+      tail=head;
       }
-     
       int flag = rand()%2;
       printf("frame %d send\n",tail);
       if(!flag)
       {write(sock,&tail,sizeof(tail));
         }
-        tail++;
-        
-        
         read(sock,&red,sizeof(red));
         if(red!=-1){head++;
         printf("\nACK %d\n",red);}
@@ -49,17 +43,11 @@ int main(int argc, char const* argv[])
 	struct sockaddr_in address;
 	int opt = 1,n;
 	int addrlen = sizeof(address);
-
-	
-
-	// Creating socket file descriptor
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0))
 		== 0) {
 		perror("socket failed");
 		exit(EXIT_FAILURE);
 	}
-
-	// Forcefully attaching socket to the port 8080
 	if (setsockopt(server_fd, SOL_SOCKET,
 				SO_REUSEADDR | SO_REUSEPORT, &opt,
 				sizeof(opt))) {
@@ -69,8 +57,6 @@ int main(int argc, char const* argv[])
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(PORT);
-
-	// Forcefully attaching socket to the port 8080
 	if (bind(server_fd, (struct sockaddr*)&address,
 			sizeof(address))
 		< 0) {
@@ -90,9 +76,7 @@ int main(int argc, char const* argv[])
 	}
 	
 	transfer(new_socket);
-// closing the connected socket
 	close(new_socket);
-// closing the listening socket
 	shutdown(server_fd, SHUT_RDWR);
 	return 0;
 }
